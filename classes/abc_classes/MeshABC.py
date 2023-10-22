@@ -97,8 +97,12 @@ class MeshABC:
                 sr += triangle.r
             except TypeError:
                 continue
-        self.mse = (svv / sr) ** 0.5
-        self.r = sr
+        try:
+            self.mse = (svv / sr) ** 0.5
+            self.r = sr
+        except ZeroDivisionError:
+            self.mse = None
+            self.r = 0
         if delete_temp_models:
             mesh_segment_model.delete_model()
         return triangles.values()

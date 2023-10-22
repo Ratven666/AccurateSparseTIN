@@ -27,8 +27,12 @@ class DeleterBadTriangleInMesh:
                 sr += triangle.r
             except TypeError:
                 continue
-        mse = (svv / sr) ** 0.5
-        r = sr
+        try:
+            mse = (svv / sr) ** 0.5
+            r = sr
+        except ZeroDivisionError:
+            mse = None
+            r = 0
         return {"len": len_, "mse": mse, "r": r}
 
     def delete_triangles_in_mesh(self, bad_triangles):

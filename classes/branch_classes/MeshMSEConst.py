@@ -3,12 +3,13 @@ from copy import copy
 
 from sqlalchemy import select
 
-from CONFIG import LOGGER, VOXEL_IN_VM
+from CONFIG import LOGGER, VOXEL_IN_VM, BORDER_LEN_COEF
 from classes.MeshDB import MeshDB
 from classes.MeshLite import MeshLite
 from classes.MeshSegmentModelDB import MeshSegmentModelDB
 from classes.Point import Point
 from classes.VoxelModelLite import VoxelModelLite
+from utils.mesh_utils.mesh_filters.MaxEdgeLengthMeshFilter import MaxEdgeLengthMeshFilter
 from utils.mesh_utils.mesh_plotters.MeshPlotterPlotly import MeshPlotterPlotly
 from utils.scan_utils.scan_samplers.VoxelDownsamplingScanSampler import VoxelDownsamplingScanSampler
 from utils.start_db import Tables, engine
@@ -55,7 +56,7 @@ class MeshMSEConstDB:
         """
         d_type = "2D" if self.is_2d else "3D"
         return (f"MESH_{self.scan.scan_name}"
-                f"_max_brd_{self.max_border_length}"
+                f"_max_brd_{round(self.max_border_length, 3)}"
                 f"_max_mse_{self.max_triangle_mse}_n_{self.n}_{d_type}")
 
     def __init_mesh(self):
@@ -91,7 +92,8 @@ class MeshMSEConstDB:
         Выполняет предвариельные рассчеты
         @return: None
         """
-        self.sampled_scan = VoxelDownsamplingScanSampler(grid_step=self.max_border_length,
+        border_length = BORDER_LEN_COEF * self.max_border_length / 2 ** 0.5
+        self.sampled_scan = VoxelDownsamplingScanSampler(grid_step=border_length,
                                                          is_2d_sampling=self.is_2d,
                                                          average_the_data=False).do_sampling(self.scan)
         self.voxel_size = self.__get_voxel_size_for_vm()
@@ -122,8 +124,6 @@ class MeshMSEConstDB:
             self.temp_mesh.calk_mesh_mse(self.scan, voxel_size=self.voxel_size, clear_previous_mse=True,
                                          delete_temp_models=True)
             self.loop_counter += 1
-
-            # self.temp_mesh.plot()
             print(self.loop_counter)
 
     def __do_brute_force_calk(self):
@@ -135,12 +135,8 @@ class MeshMSEConstDB:
             self.temp_mesh = MeshLite(self.sampled_scan)
             self.temp_mesh.calk_mesh_mse(self.scan, voxel_size=self.voxel_size, clear_previous_mse=True,
                                          delete_temp_models=True)
-
-            # self.temp_mesh.plot()
-
             bad_triangles = self.__find_and_prepare_bad_triangles(self.temp_mesh)
             if len(bad_triangles) == 0:
-                # print(f"AAAAAA{self.loop_counter}AAAAAA" * 50)
                 break
             self.temp_mesh.triangles = bad_triangles
             bad_triangles = self.__calc_mesh_triangles_centroids(self.temp_mesh)
@@ -162,6 +158,8 @@ class MeshMSEConstDB:
         self.sampled_scan.save_to_db()
         self.mesh = MeshDB(self.sampled_scan)
         self.mesh.calk_mesh_mse(self.scan, delete_temp_models=True)
+        MaxEdgeLengthMeshFilter(self.mesh, self.max_border_length).filter_mesh()
+
 
     @staticmethod
     def __get_new_triangles(prior_mesh, new_mesh):

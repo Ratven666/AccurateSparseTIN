@@ -130,3 +130,13 @@ dmypy.json
 src/
 
 data_bases/
+
+*.dxf
+
+*.ply
+
+*.txt
+
+*.png
+
+*.csv

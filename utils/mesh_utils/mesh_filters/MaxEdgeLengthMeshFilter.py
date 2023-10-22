@@ -8,11 +8,15 @@ class MaxEdgeLengthMeshFilter(MeshFilterABC):
         super().__init__(mesh)
         self.max_edge_length = max_edge_length
 
+    def get_distance(self, line):
+        return ((line.point_0.X - line.point_1.X) ** 2 +
+                (line.point_0.Y - line.point_1.Y) ** 2) ** 0.5
+
     def _filter_logic(self, triangle):
         tr_edges = [Line(triangle.point_0, triangle.point_1),
                     Line(triangle.point_1, triangle.point_2),
                     Line(triangle.point_2, triangle.point_0)]
         for edge in tr_edges:
-            if edge.get_distance() > self.max_edge_length:
+            if self.get_distance(edge) > self.max_edge_length:
                 return False
         return True
