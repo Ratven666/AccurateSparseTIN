@@ -47,16 +47,3 @@ class MeshCellDB(CellABC):
                                             mse=self.mse,
                                             )
         db_connection.execute(stmt)
-
-    def _copy_cell_data(self, db_cell_data):
-        """
-        Копирует данные из записи БД в атрибуты ячейки
-        :param db_cell_data: загруженные из БД данные
-        :return: None
-        """
-        self.voxel_id = db_cell_data["voxel_id"]
-        self.base_model_id = db_cell_data["base_model_id"]
-        self.count_of_mesh_points = db_cell_data["count_of_mesh_points"]
-        self.count_of_triangles = db_cell_data["count_of_triangles"]
-        self.r = db_cell_data["r"]
-        self.mse = db_cell_data["mse"]

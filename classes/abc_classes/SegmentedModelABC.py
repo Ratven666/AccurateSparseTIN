@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from sqlalchemy import select, desc, update, insert, and_, delete
+from sqlalchemy import select, desc, insert, and_, delete
 
 from CONFIG import LOGGER
 from utils.start_db import engine, Tables
@@ -77,27 +77,6 @@ class SegmentedModelABC(ABC):
         model_key = f"{X:.5f}_{Y:.5f}_{Z:.5f}"
         return self._model_structure.get(model_key, None)
 
-    def _calk_model_mse(self, db_connection):
-        """
-        Расчитывает СКП всей модели по СКП отдельных ячеек
-        :param db_connection: открытое соединение с БД
-        :return: None
-        """
-        vv = 0
-        sum_of_r = 0
-        for cell in self:
-            if cell.r > 0 and cell.mse is not None:
-                vv += (cell.mse ** 2) * cell.r
-                sum_of_r += cell.r
-        try:
-            self.mse_data = (vv / sum_of_r) ** 0.5
-        except ZeroDivisionError:
-            self.mse_data = None
-        stmt = update(self.db_table).values(MSE_data=self.mse_data).where(self.db_table.c.id == self.id)
-        db_connection.execute(stmt)
-        db_connection.commit()
-        self.logger.info(f"Расчет СКП модели {self.model_name} завершен и загружен в БД")
-
     def _load_cell_data_from_db(self, db_connection):
         """
         Загружает данные всех ячеек модели из БД
@@ -169,36 +148,9 @@ class SegmentedModelABC(ABC):
                 db_connection.commit()
                 self.id = self._get_last_model_id()
                 self._calk_segment_model()
-                self._calk_model_mse(db_connection)
                 self._save_cell_data_in_db(db_connection)
                 db_connection.commit()
                 self.logger.info(f"Расчет модели {self.model_name} завершен и загружен в БД\n")
-
-    def _calk_cell_mse(self, base_scan):
-        """
-        Расчитываает СКП в ячейках сегментированной модели от точек базового скана
-        :param base_scan: базовый скан из воксельной модели
-        :return: None
-        """
-        for point in base_scan:
-            try:
-                cell = self.get_model_element_for_point(point)
-                cell_z = cell.get_z_from_xy(point.X, point.Y)
-                if cell_z is None:
-                    continue
-            except AttributeError:
-                continue
-            try:
-                cell.vv += (point.Z - cell_z) ** 2
-            except AttributeError:
-                cell.vv = (point.Z - cell_z) ** 2
-        for cell in self:
-            if cell.r > 0:
-                try:
-                    cell.mse = (cell.vv / cell.r) ** 0.5
-                except AttributeError:
-                    cell.mse = None
-        self.logger.info(f"Расчет СКП высот в ячейках модели {self.model_name} завершен")
 
     def delete_model(self, db_connection=None):
         """

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, MetaData
 from CONFIG import DATABASE_NAME
 import db_models
 
-path = os.path.join("data_bases", DATABASE_NAME)
+path = os.path.join("", DATABASE_NAME)
 
 engine = create_engine(f'sqlite:///{path}')
 

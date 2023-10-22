@@ -1,7 +1,5 @@
 
-DATABASE_NAME = "K.sqlite"
-
-FILE_NAME = "src/Pit_clean.txt"
+DATABASE_NAME = "TEMP.sqlite"
 
 POINTS_CHUNK_COUNT = 100_000
 VOXEL_IN_VM = 100_000

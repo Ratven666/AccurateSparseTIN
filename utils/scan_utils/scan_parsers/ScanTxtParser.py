@@ -1,4 +1,4 @@
-from CONFIG import FILE_NAME, POINTS_CHUNK_COUNT
+from CONFIG import POINTS_CHUNK_COUNT
 from utils.scan_utils.scan_parsers.ScanParserABC import ScanParserABC
 
 
@@ -15,7 +15,7 @@ class ScanTxtParser(ScanParserABC):
         self.__chunk_count = chunk_count
         self.__last_point_id = None
 
-    def parse(self, file_name=FILE_NAME):
+    def parse(self, file_name):
         """
         Запускает процедуру парсинга файла и возвращает списки словарей с данными для загрузки в БД
         размером не превышающим POINTS_CHUNK_COUNT
