@@ -12,10 +12,8 @@ class DeleterBadTriangleInMesh:
         self._deleter = self.__chose_deleter()
 
     def __chose_deleter(self):
-        # if self.mesh.__class__.__name__ == "MeshDB":
         if isinstance(self._mesh, MeshDB):
             return MeshDBBadTriangleDeleter
-        # if self.mesh.__class__.__name__ == "MeshLite":
         if isinstance(self._mesh, MeshLite):
             return MeshLiteBadTriangleDeleter
 

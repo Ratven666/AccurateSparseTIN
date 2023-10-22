@@ -1,4 +1,4 @@
-from sqlalchemy import select, and_, insert
+from sqlalchemy import insert
 
 from classes.Point import Point
 from classes.abc_classes.CellABC import CellABC
@@ -32,26 +32,6 @@ class MeshCellDB(CellABC):
             if triangle.is_point_in_triangle(point):
                 return triangle.get_z_from_xy(x, y)
         return None
-
-    def get_mse_z_from_xy(self, x, y):
-        """
-        Рассчитывает СКП отметки точки (x, y) в ячейке
-        :param x: координата x
-        :param y: координата y
-        :return: СКП координаты z для точки (x, y)
-        """
-        point = Point(x, y, 0, 0, 0, 0)
-        for triangle in self.triangles:
-            if triangle.is_point_in_triangle(point):
-                return triangle.mse
-
-    def get_db_raw_data(self):
-        return {"voxel_id": self.voxel.id,
-                "base_model_id": self.dem_model.id,
-                "count_of_mesh_points": self.count_of_mesh_points,
-                "count_of_triangles": self.count_of_triangles,
-                "r": self.r,
-                "mse": self.mse}
 
     def _save_cell_data_in_db(self, db_connection):
         """

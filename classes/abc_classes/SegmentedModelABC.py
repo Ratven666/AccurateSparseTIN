@@ -4,9 +4,6 @@ from abc import ABC, abstractmethod
 from sqlalchemy import select, desc, update, insert, and_, delete
 
 from CONFIG import LOGGER
-from utils.segmented_mdl_utils.segmented_models_plotters.HistMSEPlotterPlotly import HistMSEPlotterPlotly
-from utils.segmented_mdl_utils.segmented_models_plotters.MsePlotterPlotly import MsePlotterPlotly
-from utils.segmented_mdl_utils.segmented_models_plotters.SegmentModelPlotly import SegmentModelPlotly
 from utils.start_db import engine, Tables
 
 
@@ -100,35 +97,6 @@ class SegmentedModelABC(ABC):
         db_connection.execute(stmt)
         db_connection.commit()
         self.logger.info(f"Расчет СКП модели {self.model_name} завершен и загружен в БД")
-
-    def plot(self, plotter=SegmentModelPlotly()):
-        """
-        Вывод отображения сегментированной модели
-        :param plotter: объект определяющий логику отображения модели
-        :return: None
-        """
-        plotter.plot(self)
-
-    def plot_mse(self, plotter=MsePlotterPlotly()):
-        """
-        Вывод отображения СКП модели
-        :param plotter: объект определяющий логику отображения модели
-        :return: None
-        """
-        plotter.plot(self)
-
-    def plot_mse_hist(self, *models, plotter=HistMSEPlotterPlotly()):
-        """
-        Вывод гистограммы СКП модели
-        :param models: сегменитрованные модели которые нужно отрисовать на совместной гистограмме
-        :param plotter: объект определяющий логику отображения гистограммы модели
-        :return: None
-        """
-
-        if len(models) == 0:
-            plotter.plot(self)
-        else:
-            plotter.plot(models)
 
     def _load_cell_data_from_db(self, db_connection):
         """
@@ -224,7 +192,6 @@ class SegmentedModelABC(ABC):
                 cell.vv += (point.Z - cell_z) ** 2
             except AttributeError:
                 cell.vv = (point.Z - cell_z) ** 2
-
         for cell in self:
             if cell.r > 0:
                 try:

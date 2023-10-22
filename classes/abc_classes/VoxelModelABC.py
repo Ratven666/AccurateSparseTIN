@@ -2,7 +2,6 @@ import logging
 from abc import ABC, abstractmethod
 
 from CONFIG import LOGGER
-from utils.voxel_utils.voxel_model_plotters.Voxel_model_plotter import VoxelModelPlotter
 
 
 class VoxelModelABC(ABC):
@@ -80,14 +79,6 @@ class VoxelModelABC(ABC):
     @abstractmethod
     def __iter__(self):
         pass
-
-    def plot(self, plotter=VoxelModelPlotter()):
-        """
-        Вывод отображения воксельной модели
-        :param plotter: объект определяющий логику отображения модели
-        :return: None
-        """
-        plotter.plot(self)
 
     @classmethod
     def get_step_by_voxel_count(cls, scan, voxel_count, is_2d_vxl_mdl=True, round_n=2):

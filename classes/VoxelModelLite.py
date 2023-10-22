@@ -1,17 +1,9 @@
-
-
-from sqlalchemy import select, desc
-from sqlalchemy.exc import IntegrityError
-
 from classes.VoxelLite import VoxelLite
-from classes.VoxelModelDB import VoxelModelDB
 from classes.abc_classes.VoxelModelABC import VoxelModelABC
 from utils.scan_utils.Scan_metrics import update_scan_borders
-from utils.start_db import engine, Tables
-from utils.voxel_utils.voxel_model_separators.VMSeparatorABC import VMSeparatorABC
 
 
-class VMLiteSeparator(VMSeparatorABC):
+class VMLiteSeparator:
 
     def __init__(self):
         self.voxel_model = None
@@ -131,49 +123,3 @@ class VoxelModelLite(VoxelModelABC):
         self.base_scan_id = scan.id
         self._calc_vxl_md_metric(scan)
         self.voxel_model_separator.separate_voxel_model(self, self.base_scan)
-
-    def save_to_db(self):
-        """Сохраняет объект ScanLite в базе данных вместе с точками"""
-        with engine.connect() as db_connection:
-            stmt = (select(Tables.voxels_db_table.c.id).order_by(desc("id")))
-            last_voxel_id = db_connection.execute(stmt).first()
-            if last_voxel_id:
-                last_voxel_id = last_voxel_id[0]
-            else:
-                last_voxel_id = 0
-            if self.id is None:
-                stmt = (select(Tables.voxel_models_db_table.c.id).order_by(desc("id")))
-                last_vm_id = db_connection.execute(stmt).first()
-                if last_vm_id:
-                    self.id = last_vm_id[0] + 1
-                else:
-                    self.id = 1
-            voxels = []
-            for voxel in self:
-                last_voxel_id += 1
-                voxel.id = last_voxel_id
-                voxels.append({"id": voxel.id, "vxl_name": voxel.vxl_name,
-                               "X": voxel.X, "Y": voxel.Y, "Z": voxel.Z,
-                               "step": voxel.step, "len": voxel.len,
-                               "R": voxel.R, "G": voxel.G, "B": voxel.B,
-                               "scan_id": voxel.scan_id, "vxl_mdl_id": self.id
-                               })
-            try:
-                db_connection.execute(Tables.voxels_db_table.insert(), voxels)
-                db_connection.execute(Tables.voxel_models_db_table.insert(),
-                                      [{"id": self.id, "vm_name": self.vm_name,
-                                        "step": self.step,
-                                        "dx": self.dx, "dy": self.dy, "dz": self.dz,
-                                        "len": self.len,
-                                        "X_count": self.X_count, "Y_count": self.Y_count, "Z_count": self.Z_count,
-                                        "min_X": self.min_X, "max_X": self.max_X,
-                                        "min_Y": self.min_Y, "max_Y": self.max_Y,
-                                        "min_Z": self.min_Z, "max_Z": self.max_Z,
-                                        "base_scan_id": self.base_scan_id}])
-                db_connection.commit()
-                return self
-            except IntegrityError:
-                self.logger.warning(f"Такие объекты уже присутствуют в Базе Данных!!")
-                return VoxelModelDB(scan=self.base_scan, step=self.step,
-                                    dx=self.dx, dy=self.dy, dz=self.dz,
-                                    is_2d_vxl_mdl=self.is_2d_vxl_mdl)

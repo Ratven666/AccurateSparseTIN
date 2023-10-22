@@ -1,4 +1,4 @@
-from sqlalchemy import delete, select, insert, and_, update
+from sqlalchemy import select, insert, update
 
 from classes.ScanDB import ScanDB
 from classes.abc_classes.MeshABC import MeshABC
@@ -63,32 +63,6 @@ class MeshDB(MeshABC):
             db_connection.execute(stmt)
             db_connection.commit()
 
-    def delete_mesh(self, db_connection=None):
-        """
-        Удаляет запись поверхности и ее треугольники из БД
-        """
-        self.delete_mesh_by_id(self.id, db_connection=db_connection)
-
-    @classmethod
-    def delete_mesh_by_id(cls, mesh_id, db_connection=None):
-        """
-        Удаляет запись поверхности и ее треугольники из БД по id
-        :param mesh_id: id поверхности которую требуется удалить из БД
-        :param db_connection: Открытое соединение с БД
-        :return: None
-        """
-        stmt_1 = delete(cls.db_table).where(cls.db_table.c.id == mesh_id)
-        stmt_2 = delete(Tables.triangles_db_table).where(Tables.triangles_db_table.c.mesh_id == mesh_id)
-        if db_connection is None:
-            with engine.connect() as db_connection:
-                db_connection.execute(stmt_1)
-                db_connection.execute(stmt_2)
-                db_connection.commit()
-        else:
-            db_connection.execute(stmt_1)
-            db_connection.execute(stmt_2)
-            db_connection.commit()
-
     @classmethod
     def get_mesh_by_id(cls, mesh_id):
         select_ = select(cls.db_table).where(cls.db_table.c.id == mesh_id)
@@ -98,22 +72,6 @@ class MeshDB(MeshABC):
                 scan_id = db_mesh_data["base_scan_id"]
                 scan = ScanDB.get_scan_from_id(scan_id)
                 return cls(scan)
-            else:
-                raise ValueError("Нет поверхности с таким id!!!")
-
-    @classmethod
-    def get_mesh_from_id(cls, mesh_id: int):
-        """
-        Возвращает объект поверхности по id
-        :param mesh_id: id поверхности которую требуется загрузить и вернуть из БД
-        :return: объект MeshDB с заданным id
-        """
-        select_ = select(cls.db_table).where(cls.db_table.c.id == mesh_id)
-        with engine.connect() as db_connection:
-            db_mesh_data = db_connection.execute(select_).mappings().first()
-            if db_mesh_data is not None:
-                base_scan = ScanDB.get_scan_from_id(db_mesh_data["base_scan_id"])
-                return cls(base_scan)
             else:
                 raise ValueError("Нет поверхности с таким id!!!")
 

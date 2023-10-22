@@ -1,7 +1,7 @@
-from utils.scan_utils.scan_savers.ScanSaverABC import ScanSaverABC
+from utils.start_db import logger
 
 
-class ScanTXTSaver(ScanSaverABC):
+class ScanTXTSaver:
 
     def save_scan(self, scan, file_name):
         if file_name is None:
@@ -10,4 +10,4 @@ class ScanTXTSaver(ScanSaverABC):
             for point in scan:
                 point_line = f"{point.X} {point.Y} {point.Z} {point.R} {point.G} {point.B}\n"
                 file.write(point_line)
-        self.logger.info(f"Сохранение скана {scan} в файл {file_name} завершено")
+        logger.info(f"Сохранение скана {scan} в файл {file_name} завершено")

@@ -2,10 +2,9 @@ from classes.Point import Point
 from classes.ScanLite import ScanLite
 from classes.VoxelModelLite import VoxelModelLite
 from utils.scan_utils.Scan_metrics import update_scan_borders
-from utils.scan_utils.scan_samplers.ScanSamplerABC import ScanSamplerABC
 
 
-class VoxelDownsamplingScanSampler(ScanSamplerABC):
+class VoxelDownsamplingScanSampler:
 
     def __init__(self, grid_step, is_2d_sampling=False, average_the_data=False):
         self.average_the_data = average_the_data

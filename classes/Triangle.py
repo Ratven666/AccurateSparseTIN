@@ -107,28 +107,3 @@ class Triangle:
         point_1 = Point.parse_point_from_db_row(row[10:17])
         point_2 = Point.parse_point_from_db_row(row[17:])
         return cls(id_=id_, r=r, mse=mse, point_0=point_0, point_1=point_1, point_2=point_2)
-
-    def get_dict(self):
-        """
-        Возвращает словарь с данными треугольника
-        """
-        return {"id": self.id,
-                "r": self.r,
-                "mse": self.mse,
-                "point_0": self.point_0.get_dict(),
-                "point_1": self.point_1.get_dict(),
-                "point_2": self.point_2.get_dict()}
-
-
-if __name__ == "__main__":
-    p0 = Point(0, 0, 1, 0, 0, 0)
-    p1 = Point(10, 0, 0, 0, 0, 0)
-    p2 = Point(0, 10, 28.01, 0, 0, 0)
-    p3 = Point(20, 0, 0, 0, 0, 0)
-    p4 = Point(5, 5, 5, 0, 0, 0)
-    p = Point(1, -0.001, 5, 0, 0, 0)
-    tri = Triangle(p0, p1, p2)
-    print(tri.get_z_from_xy(1, 1))
-    print(tri.is_point_in_triangle(p))
-    for idx, point in enumerate(tri):
-        print(idx, point)

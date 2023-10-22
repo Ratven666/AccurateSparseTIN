@@ -42,27 +42,6 @@ def update_scan_metrics(scan):
     return scan
 
 
-def update_scan_in_db_from_scan_metrics(scan_metrics: dict):
-    """
-    Обновляет значения метрик скана в БД
-    :param scan_metrics: словарь с метриками скана
-    :return: None
-    """
-    with engine.connect() as db_connection:
-        stmt = update(Tables.scans_db_table) \
-            .where(Tables.scans_db_table.c.id == scan_metrics["id"]) \
-            .values(scan_name=scan_metrics["scan_name"],
-                    len=scan_metrics["len"],
-                    min_X=scan_metrics["min_X"],
-                    max_X=scan_metrics["max_X"],
-                    min_Y=scan_metrics["min_Y"],
-                    max_Y=scan_metrics["max_Y"],
-                    min_Z=scan_metrics["min_Z"],
-                    max_Z=scan_metrics["max_Z"])
-        db_connection.execute(stmt)
-        db_connection.commit()
-
-
 def update_scan_in_db_from_scan(updated_scan, db_connection=None):
     """
     Обновляет значения метрик скана в БД

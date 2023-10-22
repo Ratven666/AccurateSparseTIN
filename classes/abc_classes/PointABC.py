@@ -35,11 +35,3 @@ class PointABC(ABC):
                    (self.G == other.G) and \
                    (self.B == other.B)
         return False
-
-    def get_dict(self):
-        """
-        Возвращаяет словарь с данными объекта
-        """
-        return {"id": self.id,
-                "X": self.X, "Y": self.Y, "Z": self.Z,
-                "R": self.R, "G": self.G, "B": self.B}

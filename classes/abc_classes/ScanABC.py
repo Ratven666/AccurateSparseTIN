@@ -1,9 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 
-from CONFIG import MAX_POINT_SCAN_PLOT, LOGGER
-from utils.scan_utils.scan_plotters.ScanPlotterMPL import ScanScanPlotterMPL
-from utils.scan_utils.scan_samplers.TotalPointCountScanSampler import TotalPointCountScanSampler
+from CONFIG import LOGGER
 from utils.scan_utils.scan_savers.ScanTXTSaver import ScanTXTSaver
 
 
@@ -37,11 +35,3 @@ class ScanABC(ABC):
 
     def save_scan_in_file(self, file_name=None, scan_saver=ScanTXTSaver()):
         scan_saver.save_scan(self, file_name)
-
-    def plot(self, plotter=ScanScanPlotterMPL(sampler=TotalPointCountScanSampler(MAX_POINT_SCAN_PLOT))):
-        """
-        Вывод отображения скана
-        :param plotter: объект определяющий логику отображения скана
-        :return: None
-        """
-        plotter.plot(self)

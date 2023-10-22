@@ -1,13 +1,11 @@
 import numpy as np
 from scipy.spatial import Delaunay
 
-from utils.mesh_utils.mesh_triangulators.TriangulatorABC import TriangulatorABC
 
-
-class ScipyTriangulator(TriangulatorABC):
+class ScipyTriangulator:
 
     def __init__(self, scan):
-        super().__init__(scan=scan)
+        self.scan = scan
         self.points_id = None
         self.vertices = None
         self.vertices_colors = None

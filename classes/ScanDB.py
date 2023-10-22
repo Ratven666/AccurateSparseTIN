@@ -1,11 +1,10 @@
-from sqlalchemy import select, insert, delete
+from sqlalchemy import select, insert
 
 from CONFIG import FILE_NAME, POINTS_CHUNK_COUNT
 from classes.abc_classes.ScanABC import ScanABC
 from utils.scan_utils.ScanLoader import ScanLoader
-from utils.scan_utils.scan_iterators.ScanIterator import ScanIterator
+from utils.scan_utils.scan_iterators.SqlLiteScanIterator import SqlLiteScanIterator
 from utils.scan_utils.scan_parsers.ScanTxtParser import ScanTxtParser
-from utils.scan_utils.scan_savers.ScanTXTSaver import ScanTXTSaver
 from utils.start_db import Tables, engine
 
 
@@ -23,25 +22,7 @@ class ScanDB(ScanABC):
         """
         Иттератор скана берет точки из БД
         """
-        return iter(ScanIterator(self))
-
-    @staticmethod
-    def delete_scan_by_id(scan_id, db_connection=None):
-        """
-        Удаляет запись скана из БД
-        :param scan_id: id
-        скана который требуется удалить из БД
-        :param db_connection: Открытое соединение с БД
-        :return: None
-        """
-        stmt = delete(Tables.scans_db_table).where(Tables.scans_db_table.c.id == scan_id)
-        if db_connection is None:
-            with engine.connect() as db_connection:
-                db_connection.execute(stmt)
-                db_connection.commit()
-        else:
-            db_connection.execute(stmt)
-            db_connection.commit()
+        return iter(SqlLiteScanIterator(self))
 
     def load_scan_from_file(self, file_name=FILE_NAME,
                             scan_loader=ScanLoader(scan_parser=ScanTxtParser(chunk_count=POINTS_CHUNK_COUNT))):

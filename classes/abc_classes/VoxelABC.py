@@ -24,19 +24,6 @@ class VoxelABC(ABC):
         self.R, self.G, self.B = 0, 0, 0
         self.container_dict = {}
 
-    def get_dict(self):
-        """
-        Возвращаяет словарь с данными объекта
-        """
-        return {"id": self.id,
-                "X": self.X, "Y": self.Y, "Z": self.Z,
-                "step": self.step,
-                "vxl_mdl_id": self.vxl_mdl_id,
-                "vxl_name": self.vxl_name,
-                "scan_id": self.scan_id,
-                "len": self.len,
-                "R": self.R, "G": self.G, "B": self.B}
-
     def __name_generator(self):
         """
         Конструктор имени вокселя

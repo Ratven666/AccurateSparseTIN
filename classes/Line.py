@@ -60,15 +60,3 @@ class Line:
         points = [Point(X=point[0], Y=point[1], Z=0,
                         R=0, G=0, B=0) for point in points]
         return points
-
-
-if __name__ == "__main__":
-    p0 = Point(-10, 0, 0, 0, 0, 0)
-    p1 = Point(10, 0, 0, 0, 0, 0)
-    p2 = Point(0, 10, 0, 0, 0, 0)
-    p3 = Point(10, 9, 0, 0, 0, 0)
-
-    l1 = Line(p0, p3)
-    print(l1)
-    points = l1.get_grid_cross_points_list(2)
-    print(points)
