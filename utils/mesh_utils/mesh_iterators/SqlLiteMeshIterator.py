@@ -12,7 +12,7 @@ class SqlLiteMeshIterator:
         """
 
     def __init__(self, mesh):
-        self.__path = os.path.join("data_bases", DATABASE_NAME)
+        self.__path = os.path.join("", DATABASE_NAME)
         self.mesh_id = mesh.id
         self.cursor = None
         self.generator = None

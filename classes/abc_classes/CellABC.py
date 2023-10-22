@@ -45,12 +45,3 @@ class CellABC(ABC):
         db_cell_data = db_connection.execute(select_).mappings().first()
         if db_cell_data is not None:
             self._copy_cell_data(db_cell_data)
-
-    @abstractmethod
-    def _copy_cell_data(self, db_cell_data):
-        """
-        Копирует данные из записи БД в атрибуты ячейки
-        :param db_cell_data: загруженные из БД данные
-        :return: None
-        """
-        pass

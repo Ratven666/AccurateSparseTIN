@@ -1,6 +1,6 @@
 from sqlalchemy import select, insert
 
-from CONFIG import FILE_NAME, POINTS_CHUNK_COUNT
+from CONFIG import POINTS_CHUNK_COUNT
 from classes.abc_classes.ScanABC import ScanABC
 from utils.scan_utils.ScanLoader import ScanLoader
 from utils.scan_utils.scan_iterators.SqlLiteScanIterator import SqlLiteScanIterator
@@ -24,7 +24,7 @@ class ScanDB(ScanABC):
         """
         return iter(SqlLiteScanIterator(self))
 
-    def load_scan_from_file(self, file_name=FILE_NAME,
+    def load_scan_from_file(self, file_name,
                             scan_loader=ScanLoader(scan_parser=ScanTxtParser(chunk_count=POINTS_CHUNK_COUNT))):
         """
         Загружает точки в скан из файла

@@ -20,38 +20,10 @@ class MeshSegmentModelDB(SegmentedModelABC):
         Метод определяющий логику создания конкретной модели
         :return: None
         """
-        self.logger.info(f"Начат расчет модели {self.model_name}")
-        base_scan = ScanDB.get_scan_from_id(self.voxel_model.base_scan_id)
-        self._calk_cell_mse(base_scan)
+        pass
 
     def _calk_cell_mse(self, base_scan):
-        """
-        Расчитываает СКП в ячейках сегментированной модели от точек базового скана
-        :param base_scan: базовый скан из воксельной модели
-        :return: None
-        """
-        for point in base_scan:
-            cell = self.get_model_element_for_point(point)
-            if cell is None:
-                continue
-            cell_z = cell.get_z_from_xy(point.X, point.Y)
-            if cell_z is None:
-                continue
-            try:
-                cell.scan_points_in_cell += 1
-                cell.vv += (point.Z - cell_z) ** 2
-            except AttributeError:
-                cell.scan_points_in_cell = 1
-                cell.vv = (point.Z - cell_z) ** 2
-        for cell in self:
-            try:
-                cell.r = cell.scan_points_in_cell - cell.count_of_mesh_points
-                if cell.r > 0:
-                    cell.mse = (cell.vv / cell.r) ** 0.5
-            except AttributeError:
-                cell.r = 0
-                cell.mse = None
-        self.logger.info(f"Расчет СКП высот в ячейках модели {self.model_name} завершен")
+        pass
 
     def _create_model_structure(self, element_class):
         """

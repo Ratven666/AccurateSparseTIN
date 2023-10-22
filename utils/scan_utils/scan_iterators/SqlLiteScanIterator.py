@@ -11,7 +11,7 @@ class SqlLiteScanIterator:
     Реализован через стандартную библиотеку sqlite3
     """
     def __init__(self, scan):
-        self.__path = os.path.join("data_bases", DATABASE_NAME)
+        self.__path = os.path.join("", DATABASE_NAME)
         self.scan_id = scan.id
         self.cursor = None
         self.generator = None
@@ -19,11 +19,6 @@ class SqlLiteScanIterator:
     def __iter__(self):
         connection = sqlite3.connect(self.__path)
         self.cursor = connection.cursor()
-        # stmt = """SELECT p.id, p.X, p.Y, p.Z,
-        #                  p.R, p.G, p.B
-        #           FROM points p
-        #           JOIN points_scans ps ON ps.point_id = p.id
-        #           WHERE ps.scan_id = (?)"""
         stmt = """SELECT p.id, p.X, p.Y, p.Z,
                          p.R, p.G, p.B
                   FROM points p
