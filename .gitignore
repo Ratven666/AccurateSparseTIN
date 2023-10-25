@@ -140,3 +140,7 @@ data_bases/
 *.png
 
 *.csv
+
+*.sqlite
+
+test.py

@@ -1,4 +1,5 @@
 import csv
+from os import path
 
 
 class CsvMeshDataExporter:
@@ -7,8 +8,9 @@ class CsvMeshDataExporter:
         self.mesh = mesh
         self.file_name = f"{self.mesh.mesh_name}.csv"
 
-    def export_mesh_data(self):
-        with open(self.file_name, "w", newline="") as csvfile:
+    def export_mesh_data(self, file_path="."):
+        file_path = path.join(file_path, f"{self.file_name}")
+        with open(file_path, "w", newline="") as csvfile:
             fieldnames = ["point_0", "point_1", "point_2", "area", "r", "rmse"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()

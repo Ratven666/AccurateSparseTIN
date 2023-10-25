@@ -33,6 +33,7 @@ class MeshMSEConstDB:
         self.voxel_size = None
         self.temp_mesh = None
         self.loop_counter = 0
+        self.count_of_bad_tr = 0
         self.__init_mesh()
 
     def __iter__(self):
@@ -86,6 +87,10 @@ class MeshMSEConstDB:
             self.__do_brute_force_calk()
         self.__end_logic()
         self.vm = None
+        for tr in self.mesh:
+            if tr.mse is not None and tr.mse > self.max_triangle_mse:
+                self.count_of_bad_tr += 1
+
 
     def __do_prepare_calc(self):
         """

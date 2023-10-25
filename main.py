@@ -63,7 +63,7 @@ def main():
     if EXPORT_SCAN:
         mesh.mesh.scan.save_scan_in_file()
     if SAVE_BASE_STATISTICS:
-        MeshStatisticCalculator(mesh.mesh).save_statistic()
+        MeshStatisticCalculator(mesh.mesh).get_statistic()
     if SAVE_FULL_MESH_STATISTICS:
         CsvMeshDataExporter(mesh.mesh).export_mesh_data()
 
