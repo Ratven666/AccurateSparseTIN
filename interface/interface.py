@@ -22,13 +22,10 @@ class ASTinUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi()
-
         self.base_filepath = None
         self.max_border_length_m = self.slider_max_border_lenght.value()
         self.target_mse = self.slider_target_mse.value()
         self.max_iteration_count = self.slider_iteration_counter.value()
-
-
         self.file_path_button.clicked.connect(self.open_file_dialog_base_filepath)
         self.file_path_text.textChanged.connect(self.base_filepath_from_text_line)
         self.slider_max_border_lenght.valueChanged.connect(self.sliders_update)
@@ -37,32 +34,36 @@ class ASTinUI(QWidget):
         self.sb_max_border_lenght.valueChanged.connect(self.sb_update)
         self.sb_target_mse.valueChanged.connect(self.sb_update)
         self.sb_iteration_counter.valueChanged.connect(self.sb_update)
-
-        self.progressBar = 0
+        self.progressBar.setProperty("value", 0)
         self.start_button.clicked.connect(self.start_calculation)
 
     def start_calculation(self):
         self.start_button.setEnabled(False)
-
         dir_path = path.dirname(self.base_filepath)
-
         create_db()
-
         scan_name = path.basename(self.base_filepath).split(".")[0]
         scan = ScanDB(scan_name=scan_name)
         scan.load_scan_from_file(file_name=self.base_filepath)
+        self.progressBar.setProperty("value", 10)
+        ########################################################################
         self.target_mse = self.target_mse / 100
-
         mesh = MeshMSEConstDB(scan, max_border_length_m=self.max_border_length_m,
                               max_triangle_mse_m=self.target_mse,
                               n=self.max_iteration_count, calk_with_brute_force=False)
+        progres = self.progressBar.value()
+        progres_step = self.calc_progress_bar_step()
+        for iteration in mesh.calculate_mesh():
+            progres += progres_step
+            self.progressBar.setProperty("value", progres)
+        self.progressBar.setProperty("value", 80)
+        ########################################################################
         stat_calculator = MeshStatisticCalculator(mesh.mesh)
-
         if self.cb_save_base_stat.isChecked():
             MeshStatisticCalculator(mesh.mesh).save_statistic(file_path=dir_path)
         if self.cb_save_full_tin_csv_log.isChecked():
             CsvMeshDataExporter(mesh.mesh).export_mesh_data(file_path=dir_path)
-
+        self.progressBar.setProperty("value", 85)
+        ########################################################################
         if self.cb_save_scan_to_txt.isChecked():
             mesh.sampled_scan.save_scan_in_file(file_path=dir_path)
         if self.cb_save_dxf.isChecked():
@@ -71,14 +72,15 @@ class ASTinUI(QWidget):
             PlyMeshExporter(mesh=mesh).export(file_path=dir_path)
         if self.cb_ply_mse.isChecked():
             PlyMseMeshExporter(mesh=mesh, min_mse=0, max_mse=self.target_mse).export(file_path=dir_path)
-
+        self.progressBar.setProperty("value", 90)
+        ########################################################################
         graf_dict = {"rmse": self.cb_mse_graf.isChecked(),
                      "r": self.cb_r_graf.isChecked(),
                      "area": self.cb_area_graf.isChecked(),
                      "pair_plot": self.cb_pair_plot_graf.isChecked()}
-
         stat_calculator.save_distributions_histograms(graf_dict, file_path=dir_path)
-
+        self.progressBar.setProperty("value", 100)
+        ########################################################################
         stat_dict = stat_calculator.get_statistic()
         self.result_table.setEnabled(True)
         self.result_table.setItem(0, 0, QTableWidgetItem(str(len(scan))))
@@ -88,20 +90,17 @@ class ASTinUI(QWidget):
         self.result_table.setItem(0, 4, QTableWidgetItem(str(round(stat_dict["Max_MSE"], 4))))
         self.result_table.setItem(0, 5, QTableWidgetItem(str(mesh.count_of_bad_tr)))
         self.result_table.setItem(0, 6, QTableWidgetItem(str(mesh.loop_counter)))
-
+        ########################################################################
         if self.cb_save_db.isChecked() is False:
             engine.dispose()
             remove(path.join(".", DATABASE_NAME))
-
+        ########################################################################
         self.start_button.setEnabled(True)
         dig = QMessageBox(self)
         dig.setWindowTitle("Result")
         dig.setText("Расчет завершен!")
         dig.setIcon(QMessageBox.Icon.Information)
         dig.exec()
-
-
-
 
     def sb_update(self):
         self.max_border_length_m = self.sb_max_border_lenght.value()
@@ -138,13 +137,8 @@ class ASTinUI(QWidget):
         else:
             self.start_button.setEnabled(False)
 
-
-
-
-
-
-
-
+    def calc_progress_bar_step(self):
+        return int(70 / (self.max_iteration_count + 1))
 
     def setupUi(self):
         self.setObjectName("Form")
