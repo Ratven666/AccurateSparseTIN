@@ -4,7 +4,6 @@ from interface.interface import ASTinUI
 
 if __name__ == "__main__":
     import sys
-
     app = QApplication(sys.argv)
     ui = ASTinUI()
     ui.show()
