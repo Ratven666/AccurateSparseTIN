@@ -10,7 +10,6 @@ from classes.MeshSegmentModelDB import MeshSegmentModelDB
 from classes.Point import Point
 from classes.VoxelModelLite import VoxelModelLite
 from utils.mesh_utils.mesh_filters.MaxEdgeLengthMeshFilter import MaxEdgeLengthMeshFilter
-from utils.mesh_utils.mesh_plotters.MeshPlotterPlotly import MeshPlotterPlotly
 from utils.scan_utils.scan_samplers.VoxelDownsamplingScanSampler import VoxelDownsamplingScanSampler
 from utils.start_db import Tables, engine
 
@@ -33,22 +32,13 @@ class MeshMSEConstDB:
         self.voxel_size = None
         self.temp_mesh = None
         self.loop_counter = 0
-        self.__init_mesh()
+        self.count_of_bad_tr = 0
 
     def __iter__(self):
         return iter(self.mesh)
 
     def __len__(self):
         return len(self.mesh)
-
-    def plot(self, plotter=MeshPlotterPlotly()):
-        """
-        Вывод отображения скана
-        :@aram plotter: объект определяющий логику отображения поверхности
-        :@return: None
-        """
-        plotter.max_mse = self.max_triangle_mse
-        plotter.plot(self.mesh)
 
     def __name_generator(self):
         """
@@ -71,21 +61,26 @@ class MeshMSEConstDB:
             if db_mesh_data is not None:
                 mesh_id = db_mesh_data["id"]
                 self.mesh = MeshDB.get_mesh_by_id(mesh_id)
-            else:
-                self.__calculate_mesh()
-                self.__init_mesh()
+                return True
 
-    def __calculate_mesh(self):
+    def calculate_mesh(self):
         """
         Основная логика расчета
         @return: None
         """
+        if self.__init_mesh():
+            return
         self.__do_prepare_calc()
-        self.__do_basic_logic()
+        yield self.loop_counter
+        for interation in self.__do_basic_logic():
+            yield self.loop_counter
         if self.calk_with_brute_force:
             self.__do_brute_force_calk()
         self.__end_logic()
         self.vm = None
+        for tr in self.mesh:
+            if tr.mse is not None and tr.mse > self.max_triangle_mse:
+                self.count_of_bad_tr += 1
 
     def __do_prepare_calc(self):
         """
@@ -124,7 +119,7 @@ class MeshMSEConstDB:
             self.temp_mesh.calk_mesh_mse(self.scan, voxel_size=self.voxel_size, clear_previous_mse=True,
                                          delete_temp_models=True)
             self.loop_counter += 1
-            print(self.loop_counter)
+            yield
 
     def __do_brute_force_calk(self):
         """

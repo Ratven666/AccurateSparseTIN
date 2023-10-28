@@ -135,8 +135,12 @@ data_bases/
 
 *.ply
 
-*.txt
-
 *.png
 
 *.csv
+
+*.sqlite
+
+test.py
+
+AccurateSparseTIN.zip

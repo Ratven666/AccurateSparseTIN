@@ -33,5 +33,5 @@ class ScanABC(ABC):
     def __iter__(self):
         pass
 
-    def save_scan_in_file(self, file_name=None, scan_saver=ScanTXTSaver()):
-        scan_saver.save_scan(self, file_name)
+    def save_scan_in_file(self, file_path=".", scan_name=None, scan_saver=ScanTXTSaver()):
+        scan_saver.save_scan(self, file_path, scan_name)

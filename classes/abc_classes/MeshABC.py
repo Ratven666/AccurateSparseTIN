@@ -4,7 +4,6 @@ from abc import abstractmethod
 from CONFIG import LOGGER, VOXEL_IN_VM
 from classes.MeshSegmentModelDB import MeshSegmentModelDB
 from classes.VoxelModelLite import VoxelModelLite
-from utils.mesh_utils.mesh_plotters.MeshPlotterPlotly import MeshPlotterPlotly
 from utils.mesh_utils.mesh_triangulators.ScipyTriangulator import ScipyTriangulator
 
 
@@ -106,11 +105,3 @@ class MeshABC:
         if delete_temp_models:
             mesh_segment_model.delete_model()
         return triangles.values()
-
-    def plot(self, plotter=MeshPlotterPlotly()):
-        """
-        Вывод отображения скана
-        :param plotter: объект определяющий логику отображения поверхности
-        :return: None
-        """
-        plotter.plot(self)
