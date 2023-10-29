@@ -1,4 +1,4 @@
-from os import remove
+from os import path, remove
 from os.path import basename, join
 
 from CONFIG import DATABASE_NAME
@@ -49,6 +49,7 @@ def main():
 
     scan = ScanDB(scan_name=scan_name)
     scan.load_scan_from_file(file_name=FILE_PATH)
+    dir_path = path.dirname(FILE_PATH)
 
     mesh = MeshMSEConstDB(scan, max_border_length_m=MAX_BORDER_LENGTH_M,
                           max_triangle_mse_m=MSE,
@@ -58,24 +59,23 @@ def main():
         print(_)
 
     if EXPORT_DXF:
-        DxfMeshExporter(mesh=mesh).export(file_path=".")
+        DxfMeshExporter(mesh=mesh).export(file_path=dir_path)
     if EXPORT_PLY:
-        PlyMeshExporter(mesh=mesh).export(file_path=".")
+        PlyMeshExporter(mesh=mesh).export(file_path=dir_path)
     if EXPORT_PLY_MSE:
-        PlyMseMeshExporter(mesh=mesh).export(file_path=".")
+        PlyMseMeshExporter(mesh=mesh).export(file_path=dir_path)
     if EXPORT_SCAN:
         mesh.mesh.scan.save_scan_in_file()
     if SAVE_BASE_STATISTICS:
-        MeshStatisticCalculator(mesh.mesh).get_statistic()
+        MeshStatisticCalculator(mesh.mesh).save_statistic(file_path=dir_path)
     if SAVE_FULL_MESH_STATISTICS:
-        CsvMeshDataExporter(mesh.mesh).export_mesh_data()
+        CsvMeshDataExporter(mesh.mesh).export_mesh_data(file_path=dir_path)
 
-    MeshStatisticCalculator(mesh.mesh).save_distributions_histograms(graf_dict)
+    MeshStatisticCalculator(mesh.mesh).save_distributions_histograms(graf_dict, file_path=dir_path)
 
     if DELETE_DB:
         engine.dispose()
         remove(join("", DATABASE_NAME))
-
 
 
 if __name__ == "__main__":
