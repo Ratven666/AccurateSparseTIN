@@ -73,7 +73,8 @@ class Triangle:
         b = ((self.point_2.X - self.point_1.X)**2 + (self.point_2.Y - self.point_1.Y)**2) ** 0.5
         c = ((self.point_0.X - self.point_2.X)**2 + (self.point_0.Y - self.point_2.Y)**2) ** 0.5
         p = (a + b + c) / 2
-        s = (p * (p - a) * (p - b) * (p - c)) ** 0.5
+        geron = (p * (p - a) * (p - b) * (p - c))
+        s = geron ** 0.5 if geron > 0 else 0
         return s
 
     def is_point_in_triangle(self, point: Point):

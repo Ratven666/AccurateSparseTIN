@@ -2,6 +2,7 @@ from os import path, remove
 from pathlib import Path
 
 from PyQt6 import QtCore, QtGui
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QFrame, QSlider, QHBoxLayout, QLabel, QSpacerItem, \
     QSizePolicy, QSpinBox, QDoubleSpinBox, QTextEdit, QToolButton, QCheckBox, QProgressBar, QPushButton, QTableWidget, \
     QTableWidgetItem, QFileDialog, QMessageBox
@@ -50,18 +51,18 @@ class ASTinUI(QWidget):
         mesh = MeshMSEConstDB(scan, max_border_length_m=self.max_border_length_m,
                               max_triangle_mse_m=self.target_mse,
                               n=self.max_iteration_count, calk_with_brute_force=False)
-        progres = self.progressBar.value()
-        progres_step = self.calc_progress_bar_step()
+        progress = self.progressBar.value()
+        progress_step = self.calc_progress_bar_step()
         for iteration in mesh.calculate_mesh():
-            progres += progres_step
-            self.progressBar.setProperty("value", progres)
+            progress += progress_step
+            self.progressBar.setProperty("value", progress)
         self.progressBar.setProperty("value", 80)
         ########################################################################
-        stat_calculator = MeshStatisticCalculator(mesh.mesh)
-        if self.cb_save_base_stat.isChecked():
-            MeshStatisticCalculator(mesh.mesh).save_statistic(file_path=dir_path)
         if self.cb_save_full_tin_csv_log.isChecked():
             CsvMeshDataExporter(mesh.mesh).export_mesh_data(file_path=dir_path)
+        stat_calculator = MeshStatisticCalculator(mesh.mesh, file_path=dir_path)
+        if self.cb_save_base_stat.isChecked():
+            MeshStatisticCalculator(mesh.mesh).save_statistic(file_path=dir_path)
         self.progressBar.setProperty("value", 85)
         ########################################################################
         if self.cb_save_scan_to_txt.isChecked():
@@ -142,6 +143,7 @@ class ASTinUI(QWidget):
 
     def setupUi(self):
         self.setObjectName("Form")
+        self.setWindowIcon(QIcon("icon.ico"))
         self.setEnabled(True)
         self.resize(1010, 615)
         self.setMinimumSize(QtCore.QSize(1010, 615))
