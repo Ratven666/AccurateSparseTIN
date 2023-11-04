@@ -1,1 +1,1 @@
-python -m nuitka --standalone --onefile --enable-plugins=pyqt6 --output-filename=AccurateSparseTIN_v0.0.1 --disable-console --windows-icon-from-ico=icon.ico --company-name=Mikhail_Vystrchil --product-name=AccurateSparseTIN_v1.0.1 --product-version=1.0.1.0 run.py
+python -m nuitka --standalone --onefile --enable-plugins=pyqt6 --output-filename=AccurateSparseTIN_v1.0.2 --disable-console --windows-icon-from-ico=icon.ico --company-name=Mikhail_Vystrchil --product-name=AccurateSparseTIN_v1.0.2 --product-version=1.0.2.0 run.py

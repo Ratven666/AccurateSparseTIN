@@ -148,3 +148,11 @@ AccurateSparseTIN.zip
 *.zip
 
 *.sqlite-journal
+
+*.exe
+
+run.build/
+
+run.dist/
+
+run.onefile-build/
