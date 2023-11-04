@@ -515,9 +515,9 @@ class ASTinUI(QWidget):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Form", "Form"))
-        self.label_4.setText(_translate("Form", "Грубее"))
-        self.label_5.setText(_translate("Form", "Точнее"))
+        self.setWindowTitle(_translate("Form", "AccurateSparseTIN"))
+        self.label_4.setText(_translate("Form", "Точнее"))
+        self.label_5.setText(_translate("Form", "Грубее"))
         self.label_iteration_counter.setText(_translate("Form", "Количество\nитераций:"))
         self.label_target_mse.setText(_translate("Form", "Целевая\nСКП\nповерхности, см:"))
         self.label.setText(_translate("Form", "Быстро"))
@@ -539,7 +539,7 @@ class ASTinUI(QWidget):
                                                     "в треугольниках поверхности"))
         self.cb_area_graf.setText(_translate("Form", "Распределение площади\n"
                                                      "треугольников в поверхности"))
-        self.label_14.setText(_translate("Form", "Создать TIN поверхность\nраспределения СКП "))
+        self.label_14.setText(_translate("Form", "Создать TIN поверхность"))
         self.cb_save_dxf.setText(_translate("Form", "Сохранить TIN поверхность в DXF формате"))
         self.cb_pair_plot_graf.setText(_translate("Form", "Совмещенный график\nраспределения"))
         self.cb_save_db.setText(_translate("Form", "Сохранить служебную базу данных"))
@@ -557,7 +557,7 @@ class ASTinUI(QWidget):
         item = self.result_table.horizontalHeaderItem(0)
         item.setText(_translate("Form", "К-во точек в исх.облаке"))
         item = self.result_table.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "К-во в точек рез.облаке"))
+        item.setText(_translate("Form", "К-во в точек раз.облаке"))
         item = self.result_table.horizontalHeaderItem(2)
         item.setText(_translate("Form", "К-во полигонов в TIN"))
         item = self.result_table.horizontalHeaderItem(3)
@@ -565,6 +565,6 @@ class ASTinUI(QWidget):
         item = self.result_table.horizontalHeaderItem(4)
         item.setText(_translate("Form", "Макс.СКП"))
         item = self.result_table.horizontalHeaderItem(5)
-        item.setText(_translate("Form", "К-во п-ов превышающих уст.СКП"))
+        item.setText(_translate("Form", "К-во п-ов, превышающих уст.СКП"))
         item = self.result_table.horizontalHeaderItem(6)
         item.setText(_translate("Form", "К-во итераций"))

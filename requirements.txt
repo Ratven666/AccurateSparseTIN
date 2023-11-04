@@ -1,0 +1,7 @@
+ezdxf==1.1.1
+numpy==1.26.1
+pandas==2.1.1
+PyQt6==6.5.3
+scipy==1.11.3
+seaborn==0.13.0
+SQLAlchemy==2.0.22
