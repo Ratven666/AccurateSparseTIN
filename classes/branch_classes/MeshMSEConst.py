@@ -3,7 +3,7 @@ from copy import copy
 
 from sqlalchemy import select
 
-from CONFIG import LOGGER, VOXEL_IN_VM, BORDER_LEN_COEF
+from CONFIG import LOGGER, VOXEL_IN_VM
 from classes.MeshDB import MeshDB
 from classes.MeshLite import MeshLite
 from classes.MeshSegmentModelDB import MeshSegmentModelDB
@@ -17,6 +17,8 @@ from utils.start_db import Tables, engine
 class MeshMSEConstDB:
     logger = logging.getLogger(LOGGER)
     db_table = Tables.meshes_db_table
+
+    BORDER_LEN_COEF = 0.7
 
     def __init__(self, scan, max_border_length_m, max_triangle_mse_m, n=5, is_2d=True, calk_with_brute_force=False):
         self.scan = scan
@@ -72,7 +74,7 @@ class MeshMSEConstDB:
             return
         self.__do_prepare_calc()
         yield self.loop_counter
-        for interation in self.__do_basic_logic():
+        for iteration in self.__do_basic_logic():
             yield self.loop_counter
         if self.calk_with_brute_force:
             self.__do_brute_force_calk()
@@ -87,7 +89,7 @@ class MeshMSEConstDB:
         Выполняет предвариельные рассчеты
         @return: None
         """
-        border_length = BORDER_LEN_COEF * self.max_border_length / 2 ** 0.5
+        border_length = self.BORDER_LEN_COEF * self.max_border_length / 2 ** 0.5
         self.sampled_scan = VoxelDownsamplingScanSampler(grid_step=border_length,
                                                          is_2d_sampling=self.is_2d,
                                                          average_the_data=False).do_sampling(self.scan)
